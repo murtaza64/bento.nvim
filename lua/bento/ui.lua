@@ -347,7 +347,12 @@ local function assign_smart_labels(buffers, available_keys)
     local last_accessed_buf = get_last_accessed_buffer()
 
     -- Reserve main keymap for last accessed buffer
-    if not config.map_last_accessed and last_accessed_buf then
+    local dual_access = config.dual_access_last_accessed
+    if dual_access == nil then
+        dual_access = config.map_last_accessed
+    end
+
+    if not dual_access and last_accessed_buf then
         for i, mark in ipairs(buffers) do
             if mark.buf_id == last_accessed_buf then
                 label_assignment[i] = config.main_keymap
