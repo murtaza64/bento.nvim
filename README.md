@@ -160,6 +160,7 @@ require("bento").setup({
     locked_first = false, -- Sort locked buffers to the top
     default_action = "open", -- Action when pressing label directly
     map_last_accessed = false, -- Whether to map a key to the last accessed buffer (besides main_keymap)
+    dual_access_last_accessed = nil, -- nil uses map_last_accessed. If true, last accessed buffer also gets a normal label.
 
     ui = {
         mode = "floating", -- "floating" | "tabline"
@@ -219,6 +220,7 @@ require("bento").setup({
 | `locked_first` | boolean | `false` | If true, locked buffers are always sorted to the top of the list. |
 | `default_action` | string | `"open"` | Default action mode when menu expands |
 | `map_last_accessed` | boolean | `false` | If true, maps a key based on filename to the last accessed buffer (like all other buffers). If false it is only mapped to main_keymap. |
+| `dual_access_last_accessed` | boolean/nil | `nil` | If true, the last accessed buffer also gets a normal label (in addition to being selectable via `main_keymap`). If nil, uses `map_last_accessed`. |
 | `highlights` | table | See below | Highlight groups for all UI elements |
 | `actions` | table | Built-in actions | Action definitions (see Actions section) |
 
