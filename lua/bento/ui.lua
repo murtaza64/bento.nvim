@@ -42,6 +42,28 @@ local function floating_alignment()
     return "right"
 end
 
+local function floating_window_opts()
+    config = bento.get_config()
+    local floating = config.ui and config.ui.floating or {}
+
+    local border = floating.border or "none"
+    local title = floating.title
+    if title ~= nil and type(title) ~= "string" then
+        title = nil
+    end
+
+    local title_pos = floating.title_pos
+    if title_pos ~= "left" and title_pos ~= "center" and title_pos ~= "right" then
+        title_pos = "center"
+    end
+
+    return {
+        border = border,
+        title = title,
+        title_pos = title_pos,
+    }
+end
+
 --- Original keymaps to restore when exiting selection mode
 --- @type table<string, table>
 local saved_keymaps = {}
@@ -518,18 +540,25 @@ end
 --- @return {bufnr: number, win_id: number}
 local function create_window(height, width)
     local row, col = calculate_position(height, width)
+    local winopts = floating_window_opts()
 
     local bufnr = vim.api.nvim_create_buf(false, true)
-    local win_id = vim.api.nvim_open_win(bufnr, false, {
+    local win_config = {
         relative = "editor",
         style = "minimal",
         width = width,
         height = height,
         row = row,
         col = col,
-        border = config.ui.floating.border or "none",
+        border = winopts.border,
         focusable = false,
-    })
+    }
+    if winopts.title ~= nil then
+        win_config.title = winopts.title
+        win_config.title_pos = winopts.title_pos
+    end
+
+    local win_id = vim.api.nvim_open_win(bufnr, false, win_config)
 
     vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
     vim.api.nvim_buf_set_option(bufnr, "buftype", "nofile")
@@ -556,14 +585,22 @@ local function update_window_size(width, height)
     end
 
     local row, col = calculate_position(height, width)
+    local winopts = floating_window_opts()
 
-    pcall(vim.api.nvim_win_set_config, bento_win_id, {
+    local win_config = {
         relative = "editor",
         width = width,
         height = height,
         row = row,
         col = col,
-    })
+        border = winopts.border,
+    }
+    if winopts.title ~= nil then
+        win_config.title = winopts.title
+        win_config.title_pos = winopts.title_pos
+    end
+
+    pcall(vim.api.nvim_win_set_config, bento_win_id, win_config)
 end
 
 --- Check if buffer is active (visible in any window)
