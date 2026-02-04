@@ -704,7 +704,6 @@ local function set_selection_keybindings(smart_labels)
         table.insert(selection_mode_keymaps, "]")
     end
 
-    -- Bento temporarily overrides <Esc> in normal mode; save/restore user mapping.
     save_keymap("n", "<Esc>")
     vim.keymap.set("n", "<Esc>", function()
         require("bento.ui").collapse_menu()
